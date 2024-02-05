@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ymostows <ymostows@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 13:58:48 by ymostows          #+#    #+#             */
-/*   Updated: 2024/01/23 16:33:35 by ymostows         ###   ########.fr       */
+/*   Updated: 2024/01/23 16:34:04 by ymostows         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,19 +93,18 @@ char	*ft_get_line(char *backup)
 
 char	*get_next_line(int fd)
 {
-	static char		*backup;
+	static char		*backup[1024];
 	char			*line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (0);
-	backup = ft_get_backup(fd, backup);
-	if (!backup)
+	backup[fd] = ft_get_backup(fd, backup[fd]);
+	if (!backup[fd])
 		return (0);
-	line = ft_get_line(backup);
-	backup = ft_update_backup(backup);
+	line = ft_get_line(backup[fd]);
+	backup[fd] = ft_update_backup(backup[fd]);
 	return (line);
 }
-
 int	main(int argc, char **argv)
 {
 	int		fd;
@@ -120,31 +119,3 @@ int	main(int argc, char **argv)
 		free(temp);
 	} while (temp);
 }
-
-/*int main(int argc, char const *argv[])
-{
-    char *line;
-    int i;
-    int n;
-    int  fd;
-    if (argc == 3)
-    {
-        fd = open(argv[1], O_RDONLY); 
-        if (fd == -1)
-            return (0);
-        n = atoi(argv[2]);
-        i = 0;
-        while (i < n)
-        {
-            line = get_next_line(fd);
-            if (!line)
-                return (0);
-			if (i < n-1)
-				free(line);
-            i++;
-        }
-		printf("line %d : %s", i, line);
-        close(fd);
-    }
-    return 0;
-}*/
